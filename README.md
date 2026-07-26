@@ -263,6 +263,9 @@ The screenshots come from the real application through `webContents.capturePage(
 The 3D models use the same shapes as the application.
 Open the models in any glTF viewer.
 
+The folder `assets/logos` holds the platform marks for the OG image.
+Each mark belongs to its owner. The OG image shows the marks to name the supported systems.
+
 ## Security and privacy
 
 - Tasker makes no network call at run time.
