@@ -37,7 +37,7 @@ async function capture() {
 
 function ogDecoration(width, height) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <g stroke="#16181d" stroke-opacity="0.028" stroke-width="1.5">
+  <g stroke="#16181d" stroke-opacity="0.014" stroke-width="1.5">
     ${Array.from({ length: 18 }, (_, i) => `<line x1="0" y1="${i * 36 + 18}" x2="${width}" y2="${i * 36 + 18}"/>`).join('')}
   </g>
   <circle cx="1120" cy="86" r="150" fill="#16a47e" opacity="0.08"/>
@@ -46,19 +46,53 @@ function ogDecoration(width, height) {
 </svg>`
 }
 
+/** Platform marks. Each mark is a simple silhouette that reads at a small size. */
+const PLATFORM_ICONS = {
+  apple: `<path d="M9.6 -4.2c-1.9 0-3 1.05-4.1 1.05C4.3 -3.15 3.1 -4.3 1.4 -4.3c-3.1 0-6.2 2.7-6.2 7.6 0 4.6 3.3 9.2 5.4 9.2 1.2 0 2.1-1 3.7-1 1.6 0 2.3 1 3.7 1 2.2 0 4.4-3.4 5.1-6-2.6-1-3.2-4.7-0.6-6.4-1-1.5-2.4-2.3-2.9-2.3z"/>
+     <path d="M6.9 -6.1c1.4-0.3 2.7-1.9 2.6-3.6-1.6 0.1-3.2 1.5-3.1 3.3 0 0.2 0.2 0.4 0.5 0.3z"/>`,
+  windows: `<path d="M-12 -10.5 L-1.4 -12 L-1.4 -1.4 L-12 -1.4 Z"/>
+     <path d="M0.6 -12.3 L12 -14 L12 -1.4 L0.6 -1.4 Z"/>
+     <path d="M-12 0.6 L-1.4 0.6 L-1.4 11.2 L-12 9.7 Z"/>
+     <path d="M0.6 0.6 L12 0.6 L12 13.2 L0.6 11.5 Z"/>`,
+  linux: `<ellipse cx="0" cy="4.4" rx="8.4" ry="9.2"/>
+     <ellipse cx="0" cy="-5" rx="6" ry="6.6"/>
+     <path d="M-3.4 12.4 L-8.6 15.4 L-3 15.4 Z"/>
+     <path d="M3.4 12.4 L8.6 15.4 L3 15.4 Z"/>
+     <circle cx="-2.3" cy="-5.6" r="2.1" fill="#ffffff"/>
+     <circle cx="2.3" cy="-5.6" r="2.1" fill="#ffffff"/>
+     <circle cx="-2.1" cy="-5.2" r="1" fill="#16181d"/>
+     <circle cx="2.1" cy="-5.2" r="1" fill="#16181d"/>
+     <path d="M0 -2.6 L-2.8 -0.3 L0 1.6 L2.8 -0.3 Z" fill="#f2a33c"/>`
+}
+
+const PLATFORMS = [
+  { label: 'macOS', icon: 'apple', width: 152 },
+  { label: 'Windows', icon: 'windows', width: 174 },
+  { label: 'Linux', icon: 'linux', width: 138 }
+]
+
+function platformRow(x, y) {
+  const height = 60
+  let offset = 0
+  const pills = PLATFORMS.map((platform) => {
+    const left = x + offset
+    offset += platform.width + 14
+    return `<g>
+      <rect x="${left}" y="${y}" width="${platform.width}" height="${height}" rx="${height / 2}" fill="#16181d" opacity="0.09"/>
+      <g transform="translate(${left + 32} ${y + height / 2}) scale(1.3)" fill="#2b2f36">${PLATFORM_ICONS[platform.icon]}</g>
+      <text x="${left + 56}" y="${y + 39}" font-size="25" font-weight="600" fill="#2b2f36">${platform.label}</text>
+    </g>`
+  })
+  return pills.join('\n    ')
+}
+
 function ogText(width, height) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
-    <text x="72" y="118" font-size="76" font-weight="700" fill="#16181d">Tasker</text>
-    <text x="72" y="164" font-size="29" font-weight="500" fill="#4a5058">Rolodex and transport keys for Claude skills.</text>
-    <g transform="translate(72 202)">
-      <rect x="0" y="0" width="132" height="40" rx="20" fill="#16181d" opacity="0.08"/>
-      <text x="20" y="27" font-size="20" font-weight="600" fill="#2b2f36">macOS</text>
-      <rect x="146" y="0" width="150" height="40" rx="20" fill="#16181d" opacity="0.08"/>
-      <text x="166" y="27" font-size="20" font-weight="600" fill="#2b2f36">Windows</text>
-      <rect x="310" y="0" width="118" height="40" rx="20" fill="#16181d" opacity="0.08"/>
-      <text x="330" y="27" font-size="20" font-weight="600" fill="#2b2f36">Linux</text>
-    </g>
+    <text x="64" y="172" font-size="150" font-weight="700" fill="#16181d">Tasker</text>
+    <text x="66" y="302" font-size="33" font-weight="500" fill="#4a5058">Rolodex and cassette interface</text>
+    <text x="66" y="348" font-size="33" font-weight="500" fill="#4a5058">for managing your RPA</text>
+    ${platformRow(64, 506)}
   </g>
 </svg>`
 }
