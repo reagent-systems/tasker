@@ -3,6 +3,7 @@ name: Lead Handoff
 description: Moves new leads from the form to the CRM.
 tags: [sales, crm]
 preview: preview.gif
+previewFollow: true
 ---
 
 # Lead Handoff
@@ -11,7 +12,7 @@ Moves new leads from the form to the CRM.
 
 ## Steps
 
-1. Open the source file.
+1. Open Form.
 2. Read each row.
 3. Open CRM.
 4. Enter the row values.

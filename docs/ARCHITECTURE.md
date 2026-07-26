@@ -63,10 +63,25 @@ The view width follows the window aspect. Each part reads its rectangle from `la
 
 ### Animated previews
 
-`preview.ts` decodes an animated image with the platform image decoder.
-The decoder produces one bitmap for each frame.
-The panel draws the current frame to a canvas texture.
-A video file uses a video texture. A skill without a preview file gets a pattern.
+A preview is a screen recording. The panel is small and upright, so the panel shows one part.
+
+`preview.ts` decodes an animated image with the platform image decoder in two passes.
+
+1. The first pass reads each frame and finds the strongest point of change.
+   The point is the pointer, because the pointer is small and holds a high contrast.
+   A blur of the difference map removes the noise of the image compression.
+   A window filter smooths the path of the point.
+2. The second pass cuts an upright crop around the point and stores the crop only.
+
+The second pass keeps the memory low. One frame of a screen recording is large,
+so the source stores crops instead of full frames. A memory limit of 48 megabytes
+sets the frame count. A longer recording loses frames at a constant step.
+
+The player runs the frames forward, then backward.
+The pointer returns along the same path, so the loop holds no jump.
+
+A video file uses the same crop, but the source finds the point during playback.
+A skill without a preview file gets a pattern.
 
 ## Security model
 
@@ -93,5 +108,5 @@ The stop key sends `SIGTERM` to the child process and runs the stop command of t
 
 ## Tests
 
-`npm test` bundles the TypeScript tests with esbuild and runs the node test runner.
+`pnpm test` bundles the TypeScript tests with esbuild and runs the node test runner.
 The tests cover the frontmatter reader, the skill scanner, the key sequence builder and the layout.

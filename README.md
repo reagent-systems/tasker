@@ -64,10 +64,11 @@ Open the application from the context menu of Finder to accept it.
 ### Build from source
 
 ```bash
-git clone https://github.com/thyfriendlyfox/tasker.git && cd tasker && npm install && npm run dev
+git clone https://github.com/thyfriendlyfox/tasker.git && cd tasker && pnpm install && pnpm run dev
 ```
 
-Node 20.19 or later is required.
+Node 20.19 or later and pnpm 11 or later are required.
+Run `corepack enable pnpm` to install pnpm.
 
 ## Use
 
@@ -121,15 +122,34 @@ preview: preview.gif
 4. Enter the row values.
 ```
 
-| Field         | Use                                         |
-| ------------- | ------------------------------------------- |
-| `name`        | Card title. The folder name is the default. |
-| `description` | Card text.                                  |
-| `tags`        | Card metadata.                              |
-| `preview`     | Preview file in the skill folder.           |
+| Field           | Use                                                             |
+| --------------- | --------------------------------------------------------------- |
+| `name`          | Card title. The folder name is the default.                     |
+| `description`   | Card text.                                                      |
+| `tags`          | Card metadata.                                                  |
+| `preview`       | Preview file in the skill folder.                               |
+| `previewZoom`   | Zoom of the preview, from 1 to 6. The default follows the size. |
+| `previewFollow` | Set the value to `false` to hold the preview at the center.     |
+| `previewLoop`   | `pingpong` or `forward`. The default is `pingpong`.             |
 
 Tasker also finds a preview file without the `preview` field.
 The file name must start with `preview`, `demo`, `recording` or `thumbnail`.
+
+### Preview crop
+
+A screen recording is wide. The preview panel is small and upright.
+Tasker therefore shows one part of the recording.
+
+1. Tasker finds the strongest point of change in each frame. That point is the pointer.
+2. Tasker smooths the path of that point.
+3. Tasker cuts an upright frame around the point and fills the panel with it.
+
+The result is a zoomed recording that follows the pointer.
+Set `previewFollow: false` to hold the crop at the center of the screen.
+
+Tasker plays the frames forward, then backward.
+The pointer therefore returns to the start of the recording, and the loop holds no jump.
+Set `previewLoop: forward` for a plain loop.
 
 Tasker reads these folders by default:
 
@@ -207,26 +227,30 @@ One card and four keys replace a long prompt.
 ## Development
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
-| Command             | Result                                                                            |
-| ------------------- | --------------------------------------------------------------------------------- |
-| `npm run dev`       | Start the application with hot reload.                                            |
-| `npm run build`     | Check the types and build to `out/`.                                              |
-| `npm test`          | Run the unit tests.                                                               |
-| `npm run lint`      | Run ESLint.                                                                       |
-| `npm run typecheck` | Run the TypeScript compiler.                                                      |
-| `npm run assets`    | Rebuild the icons, the demo skills, the models, the screenshots and the OG image. |
-| `npm run pack`      | Build an unpacked application in `release/`.                                      |
-| `npm run dist`      | Build the installers for the current platform.                                    |
+| Command              | Result                                                                            |
+| -------------------- | --------------------------------------------------------------------------------- |
+| `pnpm run dev`       | Start the application with hot reload.                                            |
+| `pnpm run build`     | Check the types and build to `out/`.                                              |
+| `pnpm test`          | Run the unit tests.                                                               |
+| `pnpm run lint`      | Run ESLint.                                                                       |
+| `pnpm run typecheck` | Run the TypeScript compiler.                                                      |
+| `pnpm run assets`    | Rebuild the icons, the demo skills, the models, the screenshots and the OG image. |
+| `pnpm run pack`      | Build an unpacked application in `release/`.                                      |
+| `pnpm run dist`      | Build the installers for the current platform.                                    |
+
+The project uses pnpm. The file `pnpm-workspace.yaml` allows the install scripts of
+`electron` and `esbuild`. Both packages download a platform binary.
+The file `.npmrc` sets `node-linker=hoisted` because electron-builder needs a flat module folder.
 
 Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the structure of the code.
 
 ## Assets
 
-`npm run assets` builds every asset from code. No binary source file is edited by hand.
+`pnpm run assets` builds every asset from code. No binary source file is edited by hand.
 
 | Output                                              | Source                           |
 | --------------------------------------------------- | -------------------------------- |

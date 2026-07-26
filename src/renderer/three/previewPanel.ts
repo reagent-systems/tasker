@@ -49,10 +49,16 @@ export class PreviewPanel {
     this.skillId = skill?.id ?? null
     this.source?.dispose()
     this.source = createPreview(
-      skill?.preview ?? { kind: 'none', url: null },
+      skill?.preview ?? { kind: 'none', url: null, zoom: null, follow: true, loop: 'pingpong' },
       this.media,
-      `#${this.colors.cardSubText.getHexString()}`,
-      `#${this.colors.slot.getHexString()}`
+      {
+        aspect: this.frameAspect,
+        zoom: null,
+        follow: true,
+        loop: 'pingpong',
+        ink: `#${this.colors.cardSubText.getHexString()}`,
+        background: `#${this.colors.slot.getHexString()}`
+      }
     )
     this.screen.material.map = this.source.texture
     this.screen.material.needsUpdate = true

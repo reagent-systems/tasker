@@ -43,7 +43,7 @@ export async function svgFramesToGif(frames, output, options = {}) {
     '-layers',
     'optimize',
     '-colors',
-    '128',
+    String(options.colors ?? 128),
     output
   ])
   await rm(dir, { recursive: true, force: true })

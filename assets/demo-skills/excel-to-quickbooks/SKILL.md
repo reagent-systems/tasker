@@ -3,6 +3,7 @@ name: Excel To QuickBooks
 description: Copies Excel rows into QuickBooks as receipts.
 tags: [finance, data entry]
 preview: preview.gif
+previewFollow: true
 ---
 
 # Excel To QuickBooks
@@ -11,7 +12,7 @@ Copies Excel rows into QuickBooks as receipts.
 
 ## Steps
 
-1. Open the source file.
+1. Open Receipts.xlsx.
 2. Read each row.
 3. Open QuickBooks.
 4. Enter the row values.

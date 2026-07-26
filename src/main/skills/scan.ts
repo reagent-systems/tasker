@@ -32,7 +32,13 @@ function extensionOf(name: string): string {
   return dot === -1 ? '' : name.slice(dot).toLowerCase()
 }
 
-async function findPreview(dir: string, declared: string): Promise<SkillPreview> {
+async function findPreview(
+  dir: string,
+  declared: string,
+  zoom: number | null,
+  follow: boolean,
+  loop: SkillPreview['loop']
+): Promise<SkillPreview> {
   const candidates: string[] = []
   if (declared) candidates.push(join(dir, declared))
 
@@ -52,12 +58,19 @@ async function findPreview(dir: string, declared: string): Promise<SkillPreview>
     if (!kind) continue
     try {
       const info = await stat(file)
-      if (info.isFile()) return { kind, url: assetUrl(file) }
+      if (info.isFile()) return { kind, url: assetUrl(file), zoom, follow, loop }
     } catch {
       continue
     }
   }
-  return { kind: 'none', url: null }
+  return { kind: 'none', url: null, zoom, follow, loop }
+}
+
+/** Reads a number from the frontmatter. An invalid value gives `null`. */
+function asNumber(value: string): number | null {
+  const parsed = Number.parseFloat(value)
+  if (!Number.isFinite(parsed) || parsed <= 0) return null
+  return Math.min(6, Math.max(1, parsed))
 }
 
 function rank(name: string): number {
@@ -80,7 +93,13 @@ async function readSkill(dir: string, file: string, source: string): Promise<Ski
   const { data } = parseFrontmatter(text)
   const name = asString(data.name) || basename(dir)
   const description = asString(data.description)
-  const preview = await findPreview(dir, asString(data.preview))
+  const preview = await findPreview(
+    dir,
+    asString(data.preview),
+    asNumber(asString(data.previewZoom)),
+    asString(data.previewFollow).toLowerCase() !== 'false',
+    asString(data.previewLoop).toLowerCase() === 'forward' ? 'forward' : 'pingpong'
+  )
   return {
     id: skillId(dir),
     name,

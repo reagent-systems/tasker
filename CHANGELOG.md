@@ -5,6 +5,20 @@ The version numbers follow [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Preview crop that follows the pointer. The preview shows a zoomed part of a screen recording.
+- Frontmatter fields `previewZoom`, `previewFollow` and `previewLoop`.
+- Frame playback that runs forward, then backward. The loop holds no jump.
+- Memory limit of 48 megabytes for the frames of one preview.
+
+### Changed
+
+- The project uses pnpm. The lock file is `pnpm-lock.yaml`.
+- The demo recordings show a full desktop with two windows and a moving pointer.
+- The demo recordings hold 84 frames at 25 frames each second.
+- The arrow icons hold a longer point.
+
 ## [0.1.0] - 2026-07-25
 
 ### Added

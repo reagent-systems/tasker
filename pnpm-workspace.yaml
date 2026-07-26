@@ -1,0 +1,5 @@
+# The electron package downloads its binary in a postinstall script.
+# The esbuild package installs its platform binary in the same way.
+allowBuilds:
+  electron: true
+  esbuild: true

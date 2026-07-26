@@ -1,6 +1,7 @@
 /**
  * Builds the demo skill library.
- * The output feeds the screenshots, the OG image and the first run of a new user.
+ * Each preview is a screen recording of a full desktop.
+ * The widget crops the recording around the pointer, so the recording stays wide here.
  */
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -17,6 +18,7 @@ const SKILLS = [
     description: 'Copies Excel rows into QuickBooks as receipts.',
     tags: ['finance', 'data entry'],
     accent: '#16a47e',
+    source: 'Receipts.xlsx',
     app: 'QuickBooks',
     rows: 6
   },
@@ -26,7 +28,8 @@ const SKILLS = [
     description: 'Exports open invoices to a dated folder.',
     tags: ['finance', 'export'],
     accent: '#4c6fff',
-    app: 'Invoices',
+    source: 'Invoices',
+    app: 'Export',
     rows: 5
   },
   {
@@ -35,6 +38,7 @@ const SKILLS = [
     description: 'Moves new leads from the form to the CRM.',
     tags: ['sales', 'crm'],
     accent: '#e8453c',
+    source: 'Form',
     app: 'CRM',
     rows: 5
   },
@@ -44,8 +48,9 @@ const SKILLS = [
     description: 'Sorts new tickets by product area and priority.',
     tags: ['support'],
     accent: '#b45cf0',
+    source: 'Inbox',
     app: 'Tickets',
-    rows: 7
+    rows: 6
   },
   {
     dir: 'expense-report',
@@ -53,58 +58,127 @@ const SKILLS = [
     description: 'Reads receipt images and fills the expense form.',
     tags: ['finance'],
     accent: '#f2a33c',
+    source: 'Receipts',
     app: 'Expenses',
     rows: 4
   }
 ]
 
-const WIDTH = 480
-const HEIGHT = 360
-const FRAMES = 24
+const WIDTH = 1280
+const HEIGHT = 800
+const OUT_WIDTH = 720
+const OUT_HEIGHT = 450
+const FRAMES = 84
 
-function frame(skill, index) {
-  const t = index / FRAMES
-  const rowHeight = 26
-  const tableTop = 108
-  const active = Math.floor(ease(Math.min(1, t * 1.25)) * skill.rows)
-  const cursorY = tableTop + active * rowHeight + 14
-  const cursorX = 120 + Math.sin(t * Math.PI * 2) * 26
-  const done = t > 0.82
+// Screen furniture.
+const LEFT = { x: 64, y: 108, w: 520, h: 600 }
+const RIGHT = { x: 640, y: 152, w: 576, h: 520 }
+const ROW_HEIGHT = 46
+const FIELD_HEIGHT = 54
+
+function lerp(a, b, t) {
+  return a + (b - a) * t
+}
+
+function rowPoint(skill, index) {
+  return { x: LEFT.x + 150, y: LEFT.y + 128 + index * ROW_HEIGHT + 14 }
+}
+
+function fieldPoint(index) {
+  return { x: RIGHT.x + 300, y: RIGHT.y + 150 + (index % 3) * FIELD_HEIGHT + 16 }
+}
+
+/** Pointer path. The pointer reads one row, then fills one field, then returns. */
+function pointer(skill, t) {
+  const perRow = 1 / skill.rows
+  const index = Math.min(skill.rows - 1, Math.floor(t / perRow))
+  const local = (t - index * perRow) / perRow
+  const from = rowPoint(skill, index)
+  const to = fieldPoint(index)
+  if (local < 0.35) {
+    const k = ease(local / 0.35)
+    return { x: lerp(from.x - 40, from.x, k), y: from.y, index, phase: 'read' }
+  }
+  if (local < 0.75) {
+    const k = ease((local - 0.35) / 0.4)
+    return { x: lerp(from.x, to.x, k), y: lerp(from.y, to.y, k), index, phase: 'move' }
+  }
+  return { x: to.x, y: to.y, index, phase: 'type' }
+}
+
+function sourceWindow(skill, active, phase) {
   const rows = []
   for (let row = 0; row < skill.rows; row += 1) {
-    const y = tableTop + row * rowHeight
-    const filled = row < active
+    const y = LEFT.y + 128 + row * ROW_HEIGHT
+    const done = row < active || (row === active && phase !== 'read')
+    const selected = row === active && phase === 'read'
     rows.push(
-      `<rect x="86" y="${y}" width="360" height="20" rx="5" fill="${filled ? skill.accent : '#e8e6e0'}" opacity="${filled ? 0.22 : 1}"/>` +
-        `<rect x="94" y="${y + 6}" width="${74 + ((row * 37) % 60)}" height="8" rx="4" fill="#9aa0ab"/>` +
-        `<rect x="250" y="${y + 6}" width="${44 + ((row * 23) % 48)}" height="8" rx="4" fill="#c3c7cf"/>` +
-        (filled
-          ? `<circle cx="428" cy="${y + 10}" r="7" fill="${skill.accent}"/><path d="M424.5 ${y + 10} l2.6 2.8 l5.2 -5.6" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
+      `<rect x="${LEFT.x + 24}" y="${y}" width="${LEFT.w - 48}" height="${ROW_HEIGHT - 8}" rx="7" fill="${
+        selected ? skill.accent : '#eeece6'
+      }" opacity="${selected ? 0.28 : 1}"/>` +
+        `<rect x="${LEFT.x + 40}" y="${y + 13}" width="${96 + ((row * 41) % 90)}" height="12" rx="6" fill="#8f96a2"/>` +
+        `<rect x="${LEFT.x + 250}" y="${y + 13}" width="${70 + ((row * 29) % 70)}" height="12" rx="6" fill="#c2c7cf"/>` +
+        (done
+          ? `<circle cx="${LEFT.x + LEFT.w - 66}" cy="${y + 19}" r="9" fill="${skill.accent}"/>`
           : '')
     )
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="#f4f2ec"/>
-  <rect x="26" y="26" width="428" height="308" rx="14" fill="#ffffff" stroke="#16181d" stroke-width="3"/>
-  <rect x="26" y="26" width="428" height="42" rx="14" fill="#f7f6f2"/>
-  <rect x="26" y="60" width="428" height="8" fill="#f7f6f2"/>
-  <circle cx="48" cy="47" r="6" fill="#e8453c"/>
-  <circle cx="68" cy="47" r="6" fill="#f2a33c"/>
-  <circle cx="88" cy="47" r="6" fill="#16a47e"/>
-  <rect x="112" y="40" width="${skill.app.length * 9}" height="14" rx="7" fill="#d7d4cc"/>
-  <rect x="42" y="86" width="44" height="232" rx="8" fill="#f2f0ea"/>
-  <rect x="52" y="100" width="24" height="8" rx="4" fill="${skill.accent}"/>
-  <rect x="52" y="120" width="24" height="8" rx="4" fill="#cfd2d8"/>
-  <rect x="52" y="140" width="24" height="8" rx="4" fill="#cfd2d8"/>
-  ${rows.join('\n  ')}
-  <rect x="86" y="78" width="${140 + skill.rows * 6}" height="12" rx="6" fill="#16181d" opacity="0.75"/>
-  ${
-    done
-      ? `<g><rect x="292" y="286" width="154" height="34" rx="17" fill="${skill.accent}"/><path d="M312 303 l7 7 l14 -15" stroke="#ffffff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="344" y="298" width="86" height="10" rx="5" fill="#ffffff" opacity="0.9"/></g>`
-      : ''
+  return `<g>
+    <rect x="${LEFT.x}" y="${LEFT.y}" width="${LEFT.w}" height="${LEFT.h}" rx="18" fill="#ffffff" stroke="#c8c4bb" stroke-width="2"/>
+    <rect x="${LEFT.x}" y="${LEFT.y}" width="${LEFT.w}" height="52" rx="18" fill="#f1efe9"/>
+    <rect x="${LEFT.x}" y="${LEFT.y + 34}" width="${LEFT.w}" height="18" fill="#f1efe9"/>
+    <circle cx="${LEFT.x + 26}" cy="${LEFT.y + 26}" r="7" fill="#e8453c"/>
+    <circle cx="${LEFT.x + 48}" cy="${LEFT.y + 26}" r="7" fill="#f2a33c"/>
+    <circle cx="${LEFT.x + 70}" cy="${LEFT.y + 26}" r="7" fill="#16a47e"/>
+    <rect x="${LEFT.x + 96}" y="${LEFT.y + 19}" width="${skill.source.length * 10}" height="14" rx="7" fill="#cfcbc2"/>
+    <rect x="${LEFT.x + 24}" y="${LEFT.y + 84}" width="200" height="16" rx="8" fill="#3b414b"/>
+    ${rows.join('\n    ')}
+  </g>`
+}
+
+function targetWindow(skill, active, phase) {
+  const fields = []
+  for (let field = 0; field < 3; field += 1) {
+    const y = RIGHT.y + 150 + field * FIELD_HEIGHT
+    const current = field === active % 3 && phase === 'type'
+    const filled = field < active % 3 || (field === active % 3 && phase === 'type')
+    fields.push(
+      `<rect x="${RIGHT.x + 40}" y="${y}" width="${RIGHT.w - 80}" height="${FIELD_HEIGHT - 12}" rx="9" fill="#ffffff" stroke="${current ? skill.accent : '#c9c5bc'}" stroke-width="${current ? 4 : 3}"/>` +
+        (filled
+          ? `<rect x="${RIGHT.x + 56}" y="${y + 15}" width="${110 + field * 46}" height="12" rx="6" fill="#7b828e"/>`
+          : '')
+    )
   }
-  <g transform="translate(${cursorX} ${cursorY})">
-    <path d="M0 0 L0 18 L4.6 13.6 L7.6 20 L11 18.4 L8 12.2 L14 12 Z" fill="#16181d" stroke="#ffffff" stroke-width="1.4"/>
+  return `<g>
+    <rect x="${RIGHT.x}" y="${RIGHT.y}" width="${RIGHT.w}" height="${RIGHT.h}" rx="18" fill="#ffffff" stroke="#c8c4bb" stroke-width="2"/>
+    <rect x="${RIGHT.x}" y="${RIGHT.y}" width="${RIGHT.w}" height="52" rx="18" fill="${skill.accent}" opacity="0.14"/>
+    <rect x="${RIGHT.x}" y="${RIGHT.y + 34}" width="${RIGHT.w}" height="18" fill="${skill.accent}" opacity="0.14"/>
+    <rect x="${RIGHT.x + 24}" y="${RIGHT.y + 19}" width="${skill.app.length * 11}" height="14" rx="7" fill="${skill.accent}"/>
+    <rect x="${RIGHT.x + 40}" y="${RIGHT.y + 94}" width="240" height="18" rx="9" fill="#3b414b"/>
+    ${fields.join('\n    ')}
+    <rect x="${RIGHT.x + RIGHT.w - 200}" y="${RIGHT.y + RIGHT.h - 84}" width="160" height="46" rx="23" fill="${skill.accent}"/>
+    <rect x="${RIGHT.x + RIGHT.w - 168}" y="${RIGHT.y + RIGHT.h - 67}" width="96" height="12" rx="6" fill="#ffffff" opacity="0.9"/>
+  </g>`
+}
+
+function frame(skill, index) {
+  const t = index / FRAMES
+  const p = pointer(skill, t)
+  const click = p.phase === 'type'
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="#b9c2cc"/>
+  <circle cx="1030" cy="120" r="260" fill="#a9b4c2" opacity="0.55"/>
+  <circle cx="220" cy="720" r="220" fill="#c6cdd6" opacity="0.6"/>
+  <rect width="${WIDTH}" height="34" fill="#20242b" opacity="0.86"/>
+  <rect x="18" y="12" width="70" height="10" rx="5" fill="#ffffff" opacity="0.7"/>
+  <rect x="${WIDTH - 130}" y="12" width="52" height="10" rx="5" fill="#ffffff" opacity="0.5"/>
+  <rect x="${WIDTH - 66}" y="12" width="40" height="10" rx="5" fill="#ffffff" opacity="0.5"/>
+  ${sourceWindow(skill, p.index, p.phase)}
+  ${targetWindow(skill, p.index, p.phase)}
+  <rect x="${WIDTH / 2 - 150}" y="${HEIGHT - 62}" width="300" height="46" rx="23" fill="#20242b" opacity="0.2"/>
+  ${click ? `<circle cx="${p.x}" cy="${p.y}" r="26" fill="${skill.accent}" opacity="0.28"/>` : ''}
+  <g transform="translate(${p.x} ${p.y})">
+    <path d="M0 0 L0 30 L7.7 22.7 L12.7 33.3 L18.3 30.7 L13.3 20.3 L23.3 20 Z" fill="#16181d" stroke="#ffffff" stroke-width="2.4"/>
   </g>
 </svg>`
 }
@@ -115,6 +189,7 @@ name: ${skill.name}
 description: ${skill.description}
 tags: [${skill.tags.join(', ')}]
 preview: preview.gif
+previewFollow: true
 ---
 
 # ${skill.name}
@@ -123,7 +198,7 @@ ${skill.description}
 
 ## Steps
 
-1. Open the source file.
+1. Open ${skill.source}.
 2. Read each row.
 3. Open ${skill.app}.
 4. Enter the row values.
@@ -145,9 +220,10 @@ async function main() {
     const frames = []
     for (let index = 0; index < FRAMES; index += 1) frames.push(frame(skill, index))
     await svgFramesToGif(frames, join(dir, 'preview.gif'), {
-      delay: 8,
-      width: WIDTH,
-      height: HEIGHT
+      delay: 4,
+      width: OUT_WIDTH,
+      height: OUT_HEIGHT,
+      colors: 96
     })
     console.log(`[demo] ${skill.dir}`)
   }

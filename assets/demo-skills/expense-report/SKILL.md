@@ -3,6 +3,7 @@ name: Expense Report
 description: Reads receipt images and fills the expense form.
 tags: [finance]
 preview: preview.gif
+previewFollow: true
 ---
 
 # Expense Report
@@ -11,7 +12,7 @@ Reads receipt images and fills the expense form.
 
 ## Steps
 
-1. Open the source file.
+1. Open Receipts.
 2. Read each row.
 3. Open Expenses.
 4. Enter the row values.

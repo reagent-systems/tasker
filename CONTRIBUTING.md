@@ -7,19 +7,24 @@ Thank you for your interest in Tasker.
 ```bash
 git clone https://github.com/thyfriendlyfox/tasker.git
 cd tasker
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
-Node 20.19 or later is required.
+Node 20.19 or later and pnpm 11 or later are required.
+Run `corepack enable pnpm` to install pnpm.
 The asset scripts need ImageMagick 7. macOS also needs `iconutil` for the icon file.
+
+The file `pnpm-workspace.yaml` allows the install scripts of `electron` and `esbuild`.
+Add a package to the `allowBuilds` list when the package needs an install script.
+Do not use npm or yarn. The lock file is `pnpm-lock.yaml`.
 
 ## Checks
 
 Run these commands before you open a pull request.
 
 ```bash
-npm run format:check && npm run lint && npm run typecheck && npm test && npm run build
+pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm test && pnpm run build
 ```
 
 ## Rules
@@ -55,7 +60,7 @@ Read [docs/ADAPTERS.md](docs/ADAPTERS.md) for the steps.
 
 ## Assets
 
-Run `npm run assets` after a change to the shapes, the colors or the layout.
+Run `pnpm run assets` after a change to the shapes, the colors or the layout.
 The command rebuilds the icons, the demo skills, the models, the screenshots and the OG image.
 Commit the output with the code change.
 

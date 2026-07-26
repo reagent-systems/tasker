@@ -3,6 +3,7 @@ name: Ticket Triage
 description: Sorts new tickets by product area and priority.
 tags: [support]
 preview: preview.gif
+previewFollow: true
 ---
 
 # Ticket Triage
@@ -11,7 +12,7 @@ Sorts new tickets by product area and priority.
 
 ## Steps
 
-1. Open the source file.
+1. Open Inbox.
 2. Read each row.
 3. Open Tickets.
 4. Enter the row values.

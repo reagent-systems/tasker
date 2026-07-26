@@ -22,28 +22,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Check the format
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Check the types
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Test
-        run: npm test
+        run: pnpm test
 
       - name: Build
-        run: npx electron-vite build
+        run: pnpm exec electron-vite build
 
   package:
     name: package ${{ matrix.os }}
@@ -56,16 +58,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Package without publication
-        run: npm run pack
+        run: pnpm run pack
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 

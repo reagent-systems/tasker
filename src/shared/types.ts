@@ -10,6 +10,15 @@ export interface SkillPreview {
   kind: PreviewKind
   /** `tasker-asset://` URL. The renderer loads this URL directly. */
   url: string | null
+  /** Zoom of the crop. `null` selects the zoom from the size of the recording. */
+  zoom: number | null
+  /** Move the crop to the place of the action in the recording. */
+  follow: boolean
+  /**
+   * `pingpong` plays the frames forward, then backward.
+   * The recording then holds no jump at the end.
+   */
+  loop: 'pingpong' | 'forward'
 }
 
 export interface Skill {

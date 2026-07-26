@@ -28,22 +28,22 @@
   "scripts": {
     "dev": "electron-vite dev",
     "start": "electron-vite preview",
-    "build": "npm run typecheck && electron-vite build",
+    "build": "pnpm run typecheck && electron-vite build",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node scripts/run-tests.mjs",
-    "assets": "npm run assets:icons && npm run assets:demo && npm run assets:models && npm run assets:shots",
+    "assets": "pnpm run assets:icons && pnpm run assets:demo && pnpm run assets:models && pnpm run assets:shots",
     "assets:icons": "node scripts/make-icons.mjs",
     "assets:demo": "node scripts/make-demo-previews.mjs",
     "assets:models": "node scripts/export-models.mjs",
-    "assets:shots": "npm run build && node scripts/capture.mjs",
-    "pack": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder",
-    "dist:mac": "npm run build && electron-builder --mac",
-    "dist:win": "npm run build && electron-builder --win",
-    "dist:linux": "npm run build && electron-builder --linux"
+    "assets:shots": "pnpm run build && node scripts/capture.mjs",
+    "pack": "pnpm run build && electron-builder --dir",
+    "dist": "pnpm run build && electron-builder",
+    "dist:mac": "pnpm run build && electron-builder --mac",
+    "dist:win": "pnpm run build && electron-builder --win",
+    "dist:linux": "pnpm run build && electron-builder --linux"
   },
   "dependencies": {
     "chokidar": "^4.0.3"
@@ -62,5 +62,6 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
     "vite": "^5.4.11"
-  }
+  },
+  "packageManager": "pnpm@11.9.0"
 }
