@@ -47,7 +47,7 @@
     "test:integration": "node scripts/run-integration.mjs"
   },
   "dependencies": {
-    "chokidar": "^4.0.3"
+    "chokidar": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
