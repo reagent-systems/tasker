@@ -1,0 +1,6 @@
+out/
+release/
+node_modules/
+assets/
+build/
+package-lock.json

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob: tasker-asset:; media-src 'self' blob: tasker-asset:; connect-src 'self' tasker-asset:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    />
+    <title>Tasker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="root">
+      <canvas id="stage"></canvas>
+      <div id="grip" class="drag"></div>
+      <div id="edge-top" class="drag"></div>
+      <div id="edge-left" class="drag"></div>
+      <div id="edge-right" class="drag"></div>
+      <div id="edge-bottom" class="drag"></div>
+      <div id="media" aria-hidden="true"></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

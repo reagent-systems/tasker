@@ -1,0 +1,66 @@
+{
+  "name": "tasker",
+  "version": "0.1.0",
+  "description": "Desktop widget that plays and records Claude skills. Rolodex on top, transport keys below.",
+  "license": "MIT",
+  "author": "Tasker contributors",
+  "homepage": "https://github.com/thyfriendlyfox/tasker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thyfriendlyfox/tasker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thyfriendlyfox/tasker/issues"
+  },
+  "keywords": [
+    "claude",
+    "claude-skills",
+    "electron",
+    "widget",
+    "automation",
+    "desktop"
+  ],
+  "main": "./out/main/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "npm run typecheck && electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node scripts/run-tests.mjs",
+    "assets": "npm run assets:icons && npm run assets:demo && npm run assets:models && npm run assets:shots",
+    "assets:icons": "node scripts/make-icons.mjs",
+    "assets:demo": "node scripts/make-demo-previews.mjs",
+    "assets:models": "node scripts/export-models.mjs",
+    "assets:shots": "npm run build && node scripts/capture.mjs",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.2",
+    "@types/three": "^0.180.0",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "three": "^0.180.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vite": "^5.4.11"
+  }
+}

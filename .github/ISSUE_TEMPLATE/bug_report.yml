@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a fault in Tasker.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Tasker version
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating system
+      options: [macOS, Windows, Linux]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: adapter
+    attributes:
+      label: Adapter
+      options: [dry-run, command, cli, desktop]
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: Give one step per line.
+      placeholder: |
+        1. Start Tasker.
+        2. Press the record key.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output
+      description: Start Tasker from a terminal and copy the output.
+      render: text
