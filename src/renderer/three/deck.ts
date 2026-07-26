@@ -136,6 +136,12 @@ export class Deck {
       const lift = key.hover * 0.012
       key.cap.position.z = 0.03 - key.press * TRAVEL + lift
       key.icon.position.z = 0.085 - key.press * TRAVEL + lift
+      key.cap.scale.setScalar(1 - key.press * 0.022)
+      key.icon.scale.setScalar(1 - key.press * 0.022)
+
+      // A pressed key sits deeper in the socket, so the cap takes less light.
+      const cap = key.cap.material as MeshStandardMaterial
+      cap.color.copy(this.colors.keyCap).lerp(this.colors.lampOff, key.press * 0.8)
 
       const material = key.icon.material as MeshStandardMaterial
       if (key.active && key.action === 'record') {
