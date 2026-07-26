@@ -108,7 +108,7 @@ async function buildOg() {
   ])
 
   // The widget sits low and right. The text block keeps the upper left corner free.
-  await magick([back, widget, '-gravity', 'southeast', '-geometry', '+6+8', '-composite', stage])
+  await magick([back, widget, '-gravity', 'southeast', '-geometry', '+6-8', '-composite', stage])
   await magick([stage, text, '-gravity', 'northwest', '-geometry', '+0+0', '-composite', output])
   console.log('[og] assets/og-image.png')
 

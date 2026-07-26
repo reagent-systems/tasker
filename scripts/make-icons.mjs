@@ -36,10 +36,10 @@ function appIcon() {
     <rect x="522" y="536" width="152" height="176" rx="42"/>
     <rect x="694" y="536" width="152" height="176" rx="42"/>
   </g>
-  <path d="M214 624 L262 580 L262 606 L300 606 L300 642 L262 642 L262 668 Z" fill="#4c6fff"/>
+  <path d="M206 624 L276 580 L276 606 L302 606 L302 642 L276 642 L276 668 Z" fill="#4c6fff"/>
   <rect x="392" y="588" width="68" height="72" rx="18" fill="#2b2f36"/>
   <circle cx="598" cy="624" r="40" fill="#e8453c"/>
-  <path d="M810 624 L762 580 L762 606 L724 606 L724 642 L762 642 L762 668 Z" fill="#16a47e"/>
+  <path d="M818 624 L748 580 L748 606 L722 606 L722 642 L748 642 L748 668 Z" fill="#16a47e"/>
   <rect x="188" y="776" width="648" height="24" rx="12" fill="${INK}" opacity="0.1"/>
 </svg>`
 }

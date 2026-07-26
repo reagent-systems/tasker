@@ -58,8 +58,8 @@ function roundedRectShape(width, height, radius) {
 function arrowShape(width, height, dir) {
   const w = width / 2
   const h = height / 2
-  const stem = h * 0.46
-  const head = w * 0.72
+  const stem = h * 0.4
+  const head = w * 0.28
   const shape = new Shape()
   shape.moveTo(-w * dir, stem)
   shape.lineTo(head * dir, stem)
