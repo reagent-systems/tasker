@@ -43,7 +43,8 @@
     "dist": "pnpm run build && electron-builder",
     "dist:mac": "pnpm run build && electron-builder --mac",
     "dist:win": "pnpm run build && electron-builder --win",
-    "dist:linux": "pnpm run build && electron-builder --linux"
+    "dist:linux": "pnpm run build && electron-builder --linux",
+    "test:integration": "node scripts/run-integration.mjs"
   },
   "dependencies": {
     "chokidar": "^4.0.3"

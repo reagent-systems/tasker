@@ -47,6 +47,24 @@ Tasker reads those folders and gives the skills a physical control surface.
 - Four adapters. You choose how the keys act on your system.
 - No network calls at run time. No telemetry.
 
+## Status
+
+Version 0.1.0. The table shows the state of each part.
+
+| Part                                   | State                                                                                                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rolodex, preview panel, transport deck | Works. The screenshots come from the application itself.                                                                                                    |
+| Skill discovery and file watcher       | Works. Unit tests and an integration test cover both.                                                                                                       |
+| `dry-run`, `command`, `cli` adapters   | Works. The integration test starts real programs and reads the journal file.                                                                                |
+| `desktop` adapter                      | The command builder has tests. Nobody tested the key sequence against the Claude desktop application. The default record sequence `cmd+shift+r` is a guess. |
+| macOS package                          | Built with electron-builder and started.                                                                                                                    |
+| Windows package, Linux package         | The build files exist. Nobody ran these builds yet.                                                                                                         |
+| Code signing, notarization             | Not set up. The workflow reads the secrets when you add them.                                                                                               |
+| `confirmBeforeRun`                     | Reserved. The field does nothing today.                                                                                                                     |
+| `assets/demo-skills`                   | Sample data. A script draws these recordings. They are not recordings of real software.                                                                     |
+
+Set `adapter.keys.record` to the sequence that your version of the Claude desktop application uses.
+
 ## Install
 
 Download an installer from the [releases page](https://github.com/thyfriendlyfox/tasker/releases).
@@ -231,16 +249,17 @@ pnpm install
 pnpm run dev
 ```
 
-| Command              | Result                                                                            |
-| -------------------- | --------------------------------------------------------------------------------- |
-| `pnpm run dev`       | Start the application with hot reload.                                            |
-| `pnpm run build`     | Check the types and build to `out/`.                                              |
-| `pnpm test`          | Run the unit tests.                                                               |
-| `pnpm run lint`      | Run ESLint.                                                                       |
-| `pnpm run typecheck` | Run the TypeScript compiler.                                                      |
-| `pnpm run assets`    | Rebuild the icons, the demo skills, the models, the screenshots and the OG image. |
-| `pnpm run pack`      | Build an unpacked application in `release/`.                                      |
-| `pnpm run dist`      | Build the installers for the current platform.                                    |
+| Command                     | Result                                                                            |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `pnpm run dev`              | Start the application with hot reload.                                            |
+| `pnpm run build`            | Check the types and build to `out/`.                                              |
+| `pnpm test`                 | Run the unit tests.                                                               |
+| `pnpm run test:integration` | Run the run path in Electron against real processes.                              |
+| `pnpm run lint`             | Run ESLint.                                                                       |
+| `pnpm run typecheck`        | Run the TypeScript compiler.                                                      |
+| `pnpm run assets`           | Rebuild the icons, the demo skills, the models, the screenshots and the OG image. |
+| `pnpm run pack`             | Build an unpacked application in `release/`.                                      |
+| `pnpm run dist`             | Build the installers for the current platform.                                    |
 
 The project uses pnpm. The file `pnpm-workspace.yaml` allows the install scripts of
 `electron` and `esbuild`. Both packages download a platform binary.

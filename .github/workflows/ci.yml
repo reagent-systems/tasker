@@ -47,6 +47,14 @@ jobs:
       - name: Build
         run: pnpm exec electron-vite build
 
+      - name: Test the run path in Electron
+        if: runner.os != 'Linux'
+        run: pnpm run test:integration
+
+      - name: Test the run path in Electron with a virtual display
+        if: runner.os == 'Linux'
+        run: xvfb-run -a pnpm run test:integration
+
   package:
     name: package ${{ matrix.os }}
     needs: check

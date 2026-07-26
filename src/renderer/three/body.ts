@@ -1,11 +1,4 @@
-import {
-  Group,
-  Mesh,
-  MeshPhysicalMaterial,
-  MeshStandardMaterial,
-  SphereGeometry,
-  type Object3D
-} from 'three'
+import { Group, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, SphereGeometry } from 'three'
 import type { Palette } from './palette.js'
 import type { Layout } from './layout.js'
 import { roundedBox } from './shapes.js'
@@ -79,18 +72,4 @@ export function createBody(layout: Layout, colors: Palette): BodyParts {
       gripMaterial.color.copy(next.lampOff)
     }
   }
-}
-
-/** Frame that sits behind a card or a panel and reads as an ink outline. */
-export function outlinePlate(
-  width: number,
-  height: number,
-  radius: number,
-  color: Palette['ink'],
-  depth = 0.04
-): Object3D {
-  return new Mesh(
-    roundedBox(width, height, depth, radius),
-    new MeshStandardMaterial({ color, roughness: 0.85, metalness: 0 })
-  )
 }
